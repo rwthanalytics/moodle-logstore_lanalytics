@@ -29,14 +29,13 @@ defined('MOODLE_INTERNAL') || die();
 use \tool_log\log\manager as log_manager;
 use \tool_log\helper\store as helper_store;
 use \tool_log\helper\reader as helper_reader;
-use \tool_log\helper\buffered_writer as helper_writer;
 use \core\event\base as event_base;
 use stdClass;
 
 class store implements \tool_log\log\writer {
     use helper_store;
     use helper_reader;
-    use helper_writer;
+    use \tool_log\helper\buffered_writer; // we are overwriting write(), see below
 
     public function __construct(log_manager $manager) {
         $this->helper_setup($manager);
@@ -53,8 +52,32 @@ class store implements \tool_log\log\writer {
         return false;
     }
 
+    public function write(\core\event\base $event) {
+        // copied mostly from "tool_log\helper\buffered_writer" with some modifications
+        global $PAGE;
+
+        if ($this->is_event_ignored($event)) {
+            return;
+        }
+
+        $entry = $event->get_data();
+
+        $this->buffer[] = $entry;
+        $this->count++;
+
+        if (!isset($this->buffersize)) {
+            $this->buffersize = $this->get_config('buffersize', 50);
+        }
+
+        if ($this->count >= $this->buffersize) {
+            $this->flush();
+        }
+    }
+
     protected function insert_event_entries(array $events) {
         global $DB;
+        print_r($events);
+        
         $records = [];
         foreach ($events as $event) {
             $eventid = 0;
