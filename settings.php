@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version info for the plugin logstore_lanalytics
+ * logstore_lanalytics settings
  *
  * @package     logstore_lanalytics
  * @copyright   Lehr- und Forschungsgebiet Ingenieurhydrologie - RWTH Aachen University
@@ -24,7 +24,28 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->component = 'logstore_lanalytics';
+if ($hassiteconfig) {
 
-$plugin->version = 2020021400;
-$plugin->requires = '2017111302';
+    $settings->add(new admin_setting_configcheckbox(
+        'logstore_lanalytics/only_track_specified_courses',
+        new lang_string('setting_only_track_specified_courses', 'logstore_lanalytics'),
+        new lang_string('setting_only_track_specified_courses_descr', 'logstore_lanalytics'),
+        0
+    ));
+
+    $settings->add(new admin_setting_configtext(
+        'logstore_lanalytics/course_ids',
+        get_string('setting_course_ids', 'logstore_lanalytics'),
+        get_string('setting_course_ids_descr', 'logstore_lanalytics'),
+        '', // default value
+        PARAM_RAW
+    ));
+
+    $settings->add(new admin_setting_configtext(
+        'logstore_lanalytics/user_ids',
+        get_string('setting_user_ids', 'logstore_lanalytics'),
+        get_string('setting_user_ids_descr', 'logstore_lanalytics'),
+        '', // default value
+        PARAM_RAW
+    ));
+}
