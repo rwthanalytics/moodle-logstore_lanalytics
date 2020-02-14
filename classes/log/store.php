@@ -79,7 +79,6 @@ class store implements \tool_log\log\writer {
 
     protected function insert_event_entries(array $events) {
         global $DB;
-        print_r($events);
         
         $records = [];
         foreach ($events as $event) {
