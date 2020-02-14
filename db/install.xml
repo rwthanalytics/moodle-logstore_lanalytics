@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="admin/tool/log/store/lanalytics/db" VERSION="20200212" COMMENT="XMLDB file for Moodle logstore/lanalytics"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../../../../lib/xmldb/xmldb.xsd"
+>
+  <TABLES>
+    <TABLE NAME="logstore_lanalytics_log" COMMENT="Log table">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="eventid" TYPE="int" LENGTH="7" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="objectid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="device" TYPE="int" LENGTH="7" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="courseid_idx" UNIQUE="true" FIELDS="courseid"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="logstore_lanalytics_evtname" COMMENT="Event names">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="7" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="eventname" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="eventname_idx" UNIQUE="true" FIELDS="eventname"/>
+      </INDEXES>
+    </TABLE>
+  </TABLES>
+</XMLDB>
