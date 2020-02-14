@@ -30,6 +30,7 @@ use \tool_log\log\manager as log_manager;
 use \tool_log\helper\store as helper_store;
 use \tool_log\helper\reader as helper_reader;
 use \core\event\base as event_base;
+use logstore_lanalytics\devices;
 use stdClass;
 
 class store implements \tool_log\log\writer {
@@ -61,6 +62,8 @@ class store implements \tool_log\log\writer {
         }
 
         $entry = $event->get_data();
+        $entry['os'] = devices::get_os();
+        $entry['browser'] = devices::get_browser();
 
         $this->buffer[] = $entry;
         $this->count++;
@@ -95,7 +98,8 @@ class store implements \tool_log\log\writer {
             $record->courseid = $event['courseid'];
             $record->objectid = $event['objectid'];
             $record->userid = $event['userid'];
-            $record->device = 0;
+            $record->os = $event['os'];
+            $record->browser = $event['browser'];
             $records[] = $record;
         }
 
