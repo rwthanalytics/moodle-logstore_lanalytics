@@ -15,11 +15,11 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Standard log reader/writer.
+ * logstore_lanalytics
  *
- * @package    logstore_standard
- * @copyright  2013 Petr Skoda {@link http://skodak.org}
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package     logstore_lanalytics
+ * @copyright   Lehr- und Forschungsgebiet Ingenieurhydrologie - RWTH Aachen University
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 namespace logstore_lanalytics\log;
@@ -31,6 +31,7 @@ use \tool_log\helper\store as helper_store;
 use \tool_log\helper\reader as helper_reader;
 use \tool_log\helper\buffered_writer as helper_writer;
 use \core\event\base as event_base;
+use stdClass;
 
 class store implements \tool_log\log\writer {
     use helper_store;
@@ -54,9 +55,28 @@ class store implements \tool_log\log\writer {
 
     protected function insert_event_entries(array $events) {
         global $DB;
+        $records = [];
+        foreach ($events as $event) {
+            $eventid = 0;
+            $dbevent = $DB->get_record('logstore_lanalytics_evtname', ['eventname' => $event['eventname']], 'id');
+            if ($dbevent) {
+                $eventid = $dbevent->id;
+            } else {
+                $evtrecord = new stdClass();
+                $evtrecord->eventname = $event['eventname'];
+                $eventid = $DB->insert_record('logstore_lanalytics_evtname', $evtrecord, true);
+            }
+            $record = new stdClass();
+            $record->eventid = $eventid;
+            $record->timecreated = $event['timecreated'];
+            $record->courseid = $event['courseid'];
+            $record->objectid = $event['objectid'];
+            $record->userid = $event['userid'];
+            $record->device = 0;
+            $records[] = $record;
+        }
 
-        print_r($events);
-        echo 'Logging...';
+        $DB->insert_records('logstore_lanalytics_log', $records);
     }
 
 }
