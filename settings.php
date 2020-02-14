@@ -48,4 +48,12 @@ if ($hassiteconfig) {
         '', // default value
         PARAM_RAW
     ));
+
+    $settings->add(new admin_setting_configtext(
+        'logstore_lanalytics/buffersize',
+        get_string('buffersize', 'logstore_lanalytics'),
+        '',
+        '50',
+        PARAM_INT
+    ));
 }
