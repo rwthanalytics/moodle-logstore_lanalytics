@@ -21,6 +21,7 @@
       </KEYS>
       <INDEXES>
         <INDEX NAME="courseid_timecreated_idx" UNIQUE="false" FIELDS="courseid, timecreated"/>
+        <INDEX NAME="courseid_contextid_idx" UNIQUE="false" FIELDS="courseid, contextid"/>
       </INDEXES>
     </TABLE>
     <TABLE NAME="logstore_lanalytics_evtname" COMMENT="Event names">
