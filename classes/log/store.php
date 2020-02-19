@@ -107,9 +107,9 @@ class store implements \tool_log\log\writer {
         $pluginman = \core_plugin_manager::instance();
         $lalogplugins = $pluginman->get_present_plugins('lalog');
         foreach ($lalogplugins as $plugin) {
-            $component = $plugin->component;
-            include_once($CFG->dirroot. '/local/learning_analytics/logs/course_mobile/classes/lalog/logger.php');
-            $loggerClass = "{$component}\\logger";
+            $path = substr($plugin->component, 6);
+            include_once($CFG->dirroot. "/local/learning_analytics/logs/{$path}/classes/lalog/logger.php");
+            $loggerClass = "{$plugin->component}\\logger";
             $loggerClass::log($records);
         }
     }
