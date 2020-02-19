@@ -71,14 +71,13 @@ class store implements \tool_log\log\writer {
         if (!isset($this->buffersize)) {
             $this->buffersize = $this->get_config('buffersize', 50);
         }
-
         if ($this->count >= $this->buffersize) {
             $this->flush();
         }
     }
 
     protected function insert_event_entries(array $events) {
-        global $DB;
+        global $DB, $CFG;
         
         $records = [];
         foreach ($events as $event) {
@@ -103,6 +102,15 @@ class store implements \tool_log\log\writer {
         }
 
         $DB->insert_records('logstore_lanalytics_log', $records);
-    }
 
+        // Iterate over lalog plugins and call their logger::log function
+        $pluginman = \core_plugin_manager::instance();
+        $lalogplugins = $pluginman->get_present_plugins('lalog');
+        foreach ($lalogplugins as $plugin) {
+            $component = $plugin->component;
+            include_once($CFG->dirroot. '/local/learning_analytics/logs/course_mobile/classes/lalog/logger.php');
+            $loggerClass = "{$component}\\logger";
+            $loggerClass::log($records);
+        }
+    }
 }
