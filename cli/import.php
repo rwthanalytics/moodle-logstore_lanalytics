@@ -9,7 +9,7 @@ if (isset($_SERVER['REMOTE_ADDR'])) {
     exit(1);
 }
 
-require(dirname(__FILE__) . '/../../../../../config.php');
+require(dirname(__FILE__) . '/../../../../../../config.php');
 require_once($CFG->libdir.'/clilib.php');
 
 $usage = "Imports data from table `logstore_standard_log` into table `logstore_lanalytics_log`.
@@ -24,7 +24,7 @@ Options:
     --batch=<value>         How many logs to be handled in one batch. Defaults to 10000
 
 Example:
-php import.php
+php cli/import.php
 ";
 
 list($options, $unrecognised) = cli_get_params([
