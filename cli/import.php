@@ -85,12 +85,13 @@ function copy_rows(int $offsetid, int $limitid) {
     
     $sql = <<<SQL
         INSERT INTO {logstore_lanalytics_log}
-            (eventid, timecreated, courseid, objectid, userid, os, browser)
+            (eventid, timecreated, courseid, objectid, contextid, userid, os, browser)
         SELECT
             e.id AS eventid,
             l.timecreated,
             l.courseid,
             l.objectid,
+            l.contextid,
             0 AS userid,
             0 AS os,
             0 AS browser
