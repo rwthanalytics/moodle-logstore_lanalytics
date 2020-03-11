@@ -96,7 +96,7 @@ class store implements \tool_log\log\writer {
             $record->courseid = $event['courseid'];
             $record->objectid = $event['objectid'];
             $record->contextid = $event['contextid'];
-            $record->userid = $event['userid'];
+            $record->userid = 0; // $event['userid']; // Anonymize log entries everything.
             $record->os = $event['os'];
             $record->browser = $event['browser'];
             $records[] = $record;
