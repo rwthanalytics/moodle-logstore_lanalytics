@@ -26,9 +26,12 @@ namespace logstore_lanalytics;
 
 defined('MOODLE_INTERNAL') || die;
 
+// Dont' change the keys (like 'Windows' or 'Opera') below,
+// as they might be used by other plugins to reference the values
 class devices {
     const BROWSER = [
             'unknown' => 0,
+            'Moodle API' => 1,
 
             'Chrome' => 1000,
             'Edge' => 2000,
@@ -42,7 +45,9 @@ class devices {
 
     const OS = [
             'unknown' => 0,
+            'Moodle API' => 1,
 
+            'Windows' => 1000,
             'Windows XP' => 1001,
             'Windows Vista' => 1002,
             'Windows 7' => 1003,

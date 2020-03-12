@@ -33,6 +33,8 @@ use \core\event\base as event_base;
 use logstore_lanalytics\devices;
 use stdClass;
 
+const MOODLE_API = 1;
+
 class store implements \tool_log\log\writer {
     use helper_store;
     use helper_reader;
@@ -62,8 +64,17 @@ class store implements \tool_log\log\writer {
         }
 
         $entry = $event->get_data();
-        $entry['os'] = devices::get_os();
-        $entry['browser'] = devices::get_browser();
+        // add similar data as in buffered_writer to make it more compatible
+        $entry['realuserid'] = \core\session\manager::is_loggedinas() ? $GLOBALS['USER']->realuser : null;
+        $entry['origin'] = $PAGE->requestorigin; // 'ws' (API/App), 'web', 'restore' or 'cli'
+        $entry['ip'] = $PAGE->requestip; // could later be used by a log to track if request is from inside or outside of specific network
+        if ($PAGE->requestorigin === 'ws') {
+            $entry['os'] = MOODLE_API;
+            $entry['browser'] = MOODLE_API;
+        } else {
+            $entry['os'] = devices::get_os();
+            $entry['browser'] = devices::get_browser();
+        }
 
         $this->buffer[] = $entry;
         $this->count++;
@@ -111,7 +122,7 @@ class store implements \tool_log\log\writer {
             $path = substr($plugin->component, 6);
             include_once($CFG->dirroot. "/local/learning_analytics/logs/{$path}/classes/lalog/logger.php");
             $loggerClass = "{$plugin->component}\\logger";
-            $loggerClass::log($records);
+            $loggerClass::log($events);
         }
     }
 }
