@@ -89,9 +89,22 @@ class store implements \tool_log\log\writer {
 
     protected function insert_event_entries(array $events) {
         global $DB, $CFG;
+
+        $trackall = true;
+        $courseids = get_config('logstore_lanalytics', 'course_ids');
+        if ($courseids !== false && $courseids !== '') {
+            $trackall = false;
+            $courseids = explode(',', $courseids);
+            for ($i = 0; $i < count($courseids); $i++) {
+                $courseids[$i] = trim($courseids[$i]);
+            }
+        }
         
         $records = [];
         foreach ($events as $event) {
+            if (!$trackall && !in_array($event['courseid'], $courseids)) {
+                continue;
+            }
             $eventid = 0;
             $dbevent = $DB->get_record('logstore_lanalytics_evtname', ['eventname' => $event['eventname']], 'id');
             if ($dbevent) {
