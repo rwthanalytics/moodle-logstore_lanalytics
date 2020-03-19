@@ -32,6 +32,7 @@ use \tool_log\helper\reader as helper_reader;
 use \core\event\base as event_base;
 use logstore_lanalytics\devices;
 use stdClass;
+use \context_course;
 
 const MOODLE_API = 1;
 
@@ -99,12 +100,26 @@ class store implements \tool_log\log\writer {
                 $courseids[$i] = trim($courseids[$i]);
             }
         }
+
+        $nottrackingroles = ['editingteacher', 'teacher', 'manager'];
         
         $records = [];
         foreach ($events as $event) {
             if (!$trackall && !in_array($event['courseid'], $courseids)) {
                 continue;
             }
+            if (count($nottrackingroles) !== 0) {
+                $coursecontext = context_course::instance($event['courseid'], IGNORE_MISSING);
+                if ($coursecontext) { // context might not be defined for global events like login, main page.
+                    $userroles = get_user_roles($coursecontext, $event['userid']);
+                    foreach ($userroles as $role) {
+                        if (in_array($role->shortname, $nottrackingroles)) {
+                            continue 2; // skip outer loop, too.
+                        }
+                    }
+                }
+            }
+
             $eventid = 0;
             $dbevent = $DB->get_record('logstore_lanalytics_evtname', ['eventname' => $event['eventname']], 'id');
             if ($dbevent) {
