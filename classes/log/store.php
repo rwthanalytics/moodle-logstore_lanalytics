@@ -101,7 +101,14 @@ class store implements \tool_log\log\writer {
             }
         }
 
-        $nottrackingroles = ['editingteacher', 'teacher', 'manager'];
+        $nottrackingrolesstr = get_config('logstore_lanalytics', 'nontracking_roles');
+        $nottrackingroles = [];
+        if ($nottrackingrolesstr !== false && $nottrackingrolesstr !== '') {
+            $nottrackingroles = explode(',', $nottrackingrolesstr);
+            for ($i = 0; $i < count($nottrackingroles); $i++) {
+                $nottrackingroles[$i] = trim($nottrackingroles[$i]);
+            }
+        }
         
         $records = [];
         foreach ($events as $event) {

@@ -35,6 +35,14 @@ if ($hassiteconfig) {
     ));
 
     $settings->add(new admin_setting_configtext(
+        'logstore_lanalytics/nontracking_roles',
+        get_string('setting_nontracking_roles', 'logstore_lanalytics'),
+        get_string('setting_nontracking_roles_descr', 'logstore_lanalytics'),
+        '', // default value
+        PARAM_RAW
+    ));
+
+    $settings->add(new admin_setting_configtext(
         'logstore_lanalytics/buffersize',
         get_string('buffersize', 'logstore_lanalytics'),
         '',
