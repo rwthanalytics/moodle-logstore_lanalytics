@@ -23,3 +23,18 @@
  */
 
 $string['pluginname'] = 'Learning Analytics Log';
+
+/*
+setting_course_ids
+setting_course_ids_descr
+setting_nontracking_roles
+setting_nontracking_roles_descr
+buffersize
+*/
+
+// Settings
+$string['setting_course_ids'] = 'course_ids';
+$string['setting_course_ids_descr'] = 'Only track the courses with the given IDs. The order of the IDs does not matter. IDs should be separated by a single comma. By default, the plugin tracks alls courses. Example: <code>10,80,10</code>.';
+$string['setting_nontracking_roles'] = 'nontracking_roles';
+$string['setting_nontracking_roles_descr'] = 'Define which roles should <strong>not</strong> be tracked. This is useful if you don\'t want to track specific roles (like managers or teachers). Specify the role by using the "shortname" (can be found via <em>Site Administration</em> -> <em>Users</em> tab -> <em>Permissions</em> category -> <em>Define roles</em>). By default, all roles are tracked. Example: <code>teacher,editingteacher,manager</code>';
+$string['buffersize'] = 'buffersize';
