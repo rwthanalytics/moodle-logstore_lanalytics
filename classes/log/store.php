@@ -95,21 +95,15 @@ class store implements \tool_log\log\writer {
         $courseids = get_config('logstore_lanalytics', 'course_ids');
         if ($courseids !== false && $courseids !== '') {
             $trackall = false;
-            $courseids = explode(',', $courseids);
-            for ($i = 0; $i < count($courseids); $i++) {
-                $courseids[$i] = trim($courseids[$i]);
-            }
+            $courseids = array_map('trim', explode(',', $courseids));
         }
 
         $nottrackingrolesstr = get_config('logstore_lanalytics', 'nontracking_roles');
         $nottrackingroles = [];
         if ($nottrackingrolesstr !== false && $nottrackingrolesstr !== '') {
-            $nottrackingroles = explode(',', $nottrackingrolesstr);
-            for ($i = 0; $i < count($nottrackingroles); $i++) {
-                $nottrackingroles[$i] = trim($nottrackingroles[$i]);
-            }
+            $nottrackingroles = array_map('trim', explode(',', $nottrackingrolesstr));
         }
-        
+
         $records = [];
         foreach ($events as $event) {
             if (!$trackall && !in_array($event['courseid'], $courseids)) {
