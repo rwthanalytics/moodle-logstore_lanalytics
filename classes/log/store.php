@@ -105,6 +105,7 @@ class store implements \tool_log\log\writer {
         }
 
         $records = [];
+        $eventsToTrack = [];
         foreach ($events as $event) {
             if (!$trackall && !in_array($event['courseid'], $courseids)) {
                 continue;
@@ -121,6 +122,7 @@ class store implements \tool_log\log\writer {
                 }
             }
 
+            $eventsToTrack[] = $event;
             $eventid = 0;
             $dbevent = $DB->get_record('logstore_lanalytics_evtname', ['eventname' => $event['eventname']], 'id');
             if ($dbevent) {
@@ -142,16 +144,18 @@ class store implements \tool_log\log\writer {
             $records[] = $record;
         }
 
-        $DB->insert_records('logstore_lanalytics_log', $records);
+        if (count($records) !== 0) {
+            $DB->insert_records('logstore_lanalytics_log', $records);
 
-        // Iterate over lalog plugins and call their logger::log function
-        $pluginman = \core_plugin_manager::instance();
-        $lalogplugins = $pluginman->get_present_plugins('lalog');
-        foreach ($lalogplugins as $plugin) {
-            $path = substr($plugin->component, 6);
-            include_once($CFG->dirroot. "/local/learning_analytics/logs/{$path}/classes/lalog/logger.php");
-            $loggerClass = "{$plugin->component}\\logger";
-            $loggerClass::log($events);
+            // Iterate over lalog plugins and call their logger::log function
+            $pluginman = \core_plugin_manager::instance();
+            $lalogplugins = $pluginman->get_present_plugins('lalog');
+            foreach ($lalogplugins as $plugin) {
+                $path = substr($plugin->component, 6);
+                include_once($CFG->dirroot. "/local/learning_analytics/logs/{$path}/classes/lalog/logger.php");
+                $loggerClass = "{$plugin->component}\\logger";
+                $loggerClass::log($eventsToTrack);
+            }
         }
     }
 }
