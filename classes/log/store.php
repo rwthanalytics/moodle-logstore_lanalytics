@@ -98,6 +98,12 @@ class store implements \tool_log\log\writer {
             $courseids = array_map('trim', explode(',', $courseids));
         }
 
+        $trackingrolesstr = get_config('logstore_lanalytics', 'tracking_roles');
+        $trackingroles = [];
+        if ($trackingrolesstr !== false && $trackingrolesstr !== '') {
+            $trackingroles = array_map('trim', explode(',', $trackingrolesstr));
+        }
+
         $nottrackingrolesstr = get_config('logstore_lanalytics', 'nontracking_roles');
         $nottrackingroles = [];
         if ($nottrackingrolesstr !== false && $nottrackingrolesstr !== '') {
@@ -110,15 +116,36 @@ class store implements \tool_log\log\writer {
             if (!$trackall && !in_array($event['courseid'], $courseids)) {
                 continue;
             }
-            if (count($nottrackingroles) !== 0) {
+            if (count($trackingroles) !== 0 || count($nottrackingroles) !== 0) {
                 $coursecontext = context_course::instance($event['courseid'], IGNORE_MISSING);
+                $trackevent = true;
                 if ($coursecontext) { // context might not be defined for global events like login, main page.
                     $userroles = get_user_roles($coursecontext, $event['userid']);
-                    foreach ($userroles as $role) {
-                        if (in_array($role->shortname, $nottrackingroles)) {
-                            continue 2; // skip outer loop, too.
+                    if (count($trackingroles) !== 0) { // whitelist mode, respecting blacklist
+                        $trackevent = false;
+                        foreach ($userroles as $role) {
+                            if (in_array($role->shortname, $nottrackingroles)) { // blacklisted
+                                $trackevent = false;
+                                break;
+                            }
+                            if (in_array($role->shortname, $trackingroles)) { // whitelisted
+                                $trackevent = true;
+                            }
+                        }
+                    } else { // blacklist mode, no whitelist defined
+                        foreach ($userroles as $role) {
+                            if (in_array($role->shortname, $nottrackingroles)) {
+                                $trackevent = false;
+                                break;
+                            }
                         }
                     }
+                } else if (count($trackingroles) !== 0) {
+                    // whitelist is active -> only track specific roles, therefore skip this one as no role is defined
+                    $trackevent = false;
+                }
+                if (!$trackevent) {
+                    continue;
                 }
             }
 
