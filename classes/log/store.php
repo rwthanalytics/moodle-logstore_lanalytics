@@ -187,11 +187,13 @@ class store implements \tool_log\log\writer {
             // Iterate over lalog plugins and call their logger::log function
             $pluginman = \core_plugin_manager::instance();
             $lalogplugins = $pluginman->get_present_plugins('lalog');
-            foreach ($lalogplugins as $plugin) {
-                $path = substr($plugin->component, 6);
-                include_once($CFG->dirroot. "/local/learning_analytics/logs/{$path}/classes/lalog/logger.php");
-                $loggerClass = "{$plugin->component}\\logger";
-                $loggerClass::log($eventsToTrack);
+            if ($lalogplugins !== null) {
+                foreach ($lalogplugins as $plugin) {
+                    $path = substr($plugin->component, 6);
+                    include_once($CFG->dirroot. "/local/learning_analytics/logs/{$path}/classes/lalog/logger.php");
+                    $loggerClass = "{$plugin->component}\\logger";
+                    $loggerClass::log($eventsToTrack);
+                }
             }
         }
     }
