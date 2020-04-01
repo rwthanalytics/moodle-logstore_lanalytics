@@ -91,11 +91,19 @@ class store implements \tool_log\log\writer {
     protected function insert_event_entries(array $events) {
         global $DB, $CFG;
 
-        $trackall = true;
-        $courseids = get_config('logstore_lanalytics', 'course_ids');
-        if ($courseids !== false && $courseids !== '') {
-            $trackall = false;
-            $courseids = array_map('trim', explode(',', $courseids));
+        $courseids = [];
+        $logscope = get_config('logstore_lanalytics', 'log_scope'); // 'all', 'include', 'exclude'
+        if ($logscope === false) {
+            $logscope = 'all';
+        }
+
+        if ($logscope === 'include' || $logscope === 'exclude') {
+            $courseids = get_config('logstore_lanalytics', 'course_ids');
+            if ($courseids === false || $courseids === '') {
+                $courseids = [];
+            } else {
+                $courseids = array_map('trim', explode(',', $courseids));
+            }
         }
 
         $trackingrolesstr = get_config('logstore_lanalytics', 'tracking_roles');
@@ -113,7 +121,9 @@ class store implements \tool_log\log\writer {
         $records = [];
         $eventsToTrack = [];
         foreach ($events as $event) {
-            if (!$trackall && !in_array($event['courseid'], $courseids)) {
+            if ($logscope !== 'all' // first checking the fast option
+                && (($logscope === 'include' && !in_array($event['courseid'], $courseids))
+                || ($logscope === 'exclude' && in_array($event['courseid'], $courseids)))) {
                 continue;
             }
             if (count($trackingroles) !== 0 || count($nottrackingroles) !== 0) {

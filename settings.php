@@ -25,13 +25,27 @@
 defined('MOODLE_INTERNAL') || die();
 
 if ($hassiteconfig) {
+    $settings->add(new admin_setting_configselect(
+        'logstore_lanalytics/log_scope',
+        get_string('setting_log_scope', 'logstore_lanalytics'),
+        get_string('setting_log_scope_descr', 'logstore_lanalytics'),
+        'all', // default value
+        [
+            'all' => get_string('setting_log_scope_all', 'logstore_lanalytics'),
+            'include' => get_string('setting_log_scope_include', 'logstore_lanalytics'),
+            'exclude' => get_string('setting_log_scope_exclude', 'logstore_lanalytics')
+        ]
+    ));
 
-    $settings->add(new admin_setting_configtext(
+    // This is only a textarea to make it more comforable entering the values
+    $settings->add(new admin_setting_configtextarea(
         'logstore_lanalytics/course_ids',
         get_string('setting_course_ids', 'logstore_lanalytics'),
         get_string('setting_course_ids_descr', 'logstore_lanalytics'),
-        '', // default value
-        PARAM_RAW
+        '',
+        PARAM_RAW,
+        '60',
+        '2'
     ));
 
     $settings->add(new admin_setting_configtext(

@@ -33,8 +33,13 @@ buffersize
 */
 
 // Settings
+$string['setting_log_scope'] = 'log_scope';
+$string['setting_log_scope_descr'] = 'Defines the scope of the logging process. By default, everything is logged.';
+$string['setting_log_scope_all'] = 'Log all events';
+$string['setting_log_scope_include'] = 'Log events only in courses specified via course_ids below';
+$string['setting_log_scope_exclude'] = 'Log events EXCLUDING the courses specified via course_ids below';
 $string['setting_course_ids'] = 'course_ids';
-$string['setting_course_ids_descr'] = 'Only track the courses with the given IDs. The order of the IDs does not matter. IDs should be separated by a single comma. By default, the plugin tracks alls courses. Example: <code>10,80,10</code>.';
+$string['setting_course_ids_descr'] = 'Only track the courses with the given IDs. The order of the IDs does not matter. IDs should be separated by a single comma. By default, the plugin tracks alls courses. Example: <code>10,153,102</code>.';
 $string['setting_tracking_roles'] = 'tracking_roles';
 $string['setting_tracking_roles_descr'] = 'Define which roles should be tracked (whitelist). This is useful if you only want to track specific roles (like students or guests). Specify the role by using the "shortname" (can be found via <em>Site Administration</em> -> <em>Users</em> tab -> <em>Permissions</em> category -> <em>Define roles</em>). By default, all roles are tracked. Example: <code>student,guest</code>';
 $string['setting_nontracking_roles'] = 'nontracking_roles';
