@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## [0.4.0] - TODO
+## [0.4.0] - 2020-04-03
 ### Added
 - Setting `tracking_roles` added to be used as whitelist for roles.
 - Setting `log_scope` added to decide what should be logged
