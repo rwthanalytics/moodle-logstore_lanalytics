@@ -69,14 +69,13 @@ class devices {
         $user_agent = $_SERVER['HTTP_USER_AGENT'] ?? '';
 
         $browser_array = array(
-                '/msie|trident/i'   =>  'Internet Explorer',
-                '/firefox/i'        =>  'Firefox',
-                '/chrome/i'         =>  'Chrome',
-                '/safari/i'         =>  'Safari',
-                '/edge/i'           =>  'Edge',
-                '/opera/i'          =>  'Opera',
-                '/opr/i'            =>  'Opera',
-                '/mobile/i'         =>  'Mobile'
+            '/msie|trident/i'           => 'Internet Explorer',
+            '/firefox|fxios/i'          => 'Firefox',
+            '/opr|opios|opera/i'        => 'Opera',
+            '/edge|edga|edgios|edg\//i' => 'Edge',
+            '/chrome|crios/i'           => 'Chrome',
+            '/safari/i'                 => 'Safari',
+            '/mobile/i'                 => 'Mobile'
         );
 
         $browser = '';
@@ -94,22 +93,23 @@ class devices {
         $user_agent = $_SERVER['HTTP_USER_AGENT'] ?? '';
 
         $os_array = array(
-                '/windows nt 10/i'      =>  'Windows 10',
-                '/windows nt 6.3/i'     =>  'Windows 8.1',
-                '/windows nt 6.2/i'     =>  'Windows 8',
-                '/windows nt 6.1/i'     =>  'Windows 7',
-                '/windows nt 6.0/i'     =>  'Windows Vista',
-                '/windows nt 5.1/i'     =>  'Windows XP',
-                '/windows xp/i'         =>  'Windows XP',
-                '/macintosh|mac os x/i' =>  'macOS',
-                '/mac_powerpc/i'        =>  'macOS',
-                '/linux/i'              =>  'Linux',
-                '/ubuntu/i'             =>  'Linux',
-                '/iphone/i'             =>  'iOS',
-                '/ipod/i'               =>  'iOS',
-                '/ipad/i'               =>  'iOS',
-                '/android/i'            =>  'Android',
-                '/webos/i'              =>  'Mobile'
+            '/windows nt 10/i'      => 'Windows 10',
+            '/windows nt 6.3/i'     => 'Windows 8.1',
+            '/windows nt 6.2/i'     => 'Windows 8',
+            '/windows nt 6.1/i'     => 'Windows 7',
+            '/windows nt 6.0/i'     => 'Windows Vista',
+            '/windows nt 5.1/i'     => 'Windows XP',
+            '/windows xp/i'         => 'Windows XP',
+            '/Windows Mobile/i'     => 'Mobile',
+            '/iphone/i'             => 'iOS',
+            '/ipod/i'               => 'iOS',
+            '/ipad/i'               => 'iOS',
+            '/macintosh|mac os x/i' => 'macOS',
+            '/mac_powerpc/i'        => 'macOS',
+            '/android/i'            => 'Android',
+            '/linux/i'              => 'Linux',
+            '/ubuntu/i'             => 'Linux',
+            '/webos/i'              => 'Mobile'
         );
 
         $os_platform = '';
@@ -121,5 +121,21 @@ class devices {
         }
 
         return self::OS[$os_platform] ?? 0;
+    }
+
+    public static function browserIdToString(int $id): string {
+        $result = array_search($id, self::BROWSER);
+        if ($result === false) {
+            return '[BROWSER NOT IN LIST]';
+        }
+        return $result;
+    }
+
+    public static function osIdToString(int $id): string {
+        $result = array_search($id, self::OS);
+        if ($result === false) {
+            return '[OS NOT IN LIST]';
+        }
+        return $result;
     }
 }
