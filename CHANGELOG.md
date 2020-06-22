@@ -1,6 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [0.6.0] - 2020-06-22
+### Added
+- Support for `guest` role is added
+  - Previously, events triggered by guests were never logged
+  - `guest` is now a valid identifier for whitelists and blacklists
+
 ## [0.5.0] - 2020-05-13
 ### Fixed
 - Regular expressions for browser detection were off, especially "iOS" devices were counted as "macOS"
