@@ -132,8 +132,10 @@ class store implements \tool_log\log\writer {
                 if ($coursecontext) { // context might not be defined for global events like login, main page.
                     $userroles = get_user_roles($coursecontext, $event['userid']);
                     if (isguestuser()) {
-                        $guestrole = $DB->get_record('role', ['shortname' => 'guest'], '*', MUST_EXIST);
-                        $userroles[$guestrole->id] = $guestrole;
+                        // we "fake" a guest role here as only the shortname matters (that way, we don't need another database request)
+                        $guestrole = new \stdClass;
+                        $guestrole->shortname = 'guest';
+                        $userroles[] = $guestrole;
                     }
                     if (count($trackingroles) !== 0) { // whitelist mode, respecting blacklist
                         $trackevent = false;
