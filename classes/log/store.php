@@ -48,7 +48,7 @@ class store implements \tool_log\log\writer {
     protected function is_event_ignored(event_base $event) {
         if ((!CLI_SCRIPT || PHPUNIT_TEST)) {
             // Always log inside CLI scripts because we do not login there.
-            if (!isloggedin() || isguestuser()) {
+            if (!isloggedin()) {
                 return true;
             }
         }
@@ -131,6 +131,10 @@ class store implements \tool_log\log\writer {
                 $trackevent = true;
                 if ($coursecontext) { // context might not be defined for global events like login, main page.
                     $userroles = get_user_roles($coursecontext, $event['userid']);
+                    if (isguestuser()) {
+                        $guestrole = $DB->get_record('role', ['shortname' => 'guest'], '*', MUST_EXIST);
+                        $userroles[$guestrole->id] = $guestrole;
+                    }
                     if (count($trackingroles) !== 0) { // whitelist mode, respecting blacklist
                         $trackevent = false;
                         foreach ($userroles as $role) {
