@@ -7,6 +7,8 @@ All notable changes to this project will be documented in this file.
   - Dropped columns: userid, objectid, os, browser
   - Added columns: device (combined value for os and browser)
 - This means roughly 20% less space is used
+### Added
+- Import script: Option added to import only the last X weeks
 
 ## [0.6.0] - 2020-06-22
 ### Added
