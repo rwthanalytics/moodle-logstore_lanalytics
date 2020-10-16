@@ -22,6 +22,10 @@ Options:
                             table `logstore_lanalytics_log`. This option should only
                             be used before activating the logstore in the settings.
     --startid=<value>       First ID to be imported, leave empty to import all events.
+    --pastweeks=<value>     Instead of using startid you can use past-weeks to set how
+                            much weeks from the pasts should be imported. The importer
+                            will ignore all events that are older. Example: Set this
+                            value to 3 to import only the logs from the last 3 weeks.
     --batch=<value>         How many logs to be handled in one batch. Defaults to 10000
     --limit=<value>         For testing/development purposes only. This set the max. ID
                             of the row to limit the number of rows to be imported.
@@ -34,6 +38,7 @@ list($options, $unrecognised) = cli_get_params([
     'help' => false,
     'clean' => false,
     'startid' => 0,
+    'pastweeks' => 0,
     'batch' => 0,
     'limit' => 0,
 ], [
@@ -55,6 +60,22 @@ if ($options['batch']) {
 
 if ($options['limit']) {
     $limit = (int) $options['limit'];
+}
+if ($options['pastweeks']) {
+    if ($offsetid !== 0) {
+        cli_writeln("Please specify only startid or pastweeks but not both.");
+        die();
+    }
+    $pastweeks = (int) $options['pastweeks'];
+    $date = new \DateTime();
+    $date->modify('Monday this week');
+    $date->modify("-{$pastweeks} week");
+    $timestamp = $date->getTimestamp();
+    cli_writeln("Searching for first event with timecreated >= {$timestamp} (Monday {$pastweeks} weeks ago).");
+    $row = $DB->get_records_sql("SELECT id FROM {logstore_standard_log} WHERE timecreated >= ? ORDER BY id LIMIT 1", [$timestamp]);
+    $foundid = current($row)->id;
+    $offsetid = $foundid - 1;
+    cli_writeln("  Found row ID: {$foundid}");
 }
 
 function truncate_logs() {
@@ -127,7 +148,6 @@ if ($options['clean']) {
 
 cli_writeln("Starting import.");
 
-$offsetid = 0;
 while (check_for_rows($offsetid) && ($limit === 0 || $offsetid < $limit)) {
     $limitid = $offsetid + $batch;
     cli_writeln("  Importing rows from > {$offsetid} to <= {$limitid}");
