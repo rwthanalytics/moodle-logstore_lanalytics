@@ -2,6 +2,7 @@
 
 $offsetid = 0;
 $batch = 10000;
+$limit = 0;
 
 define('CLI_SCRIPT', true);
 
@@ -13,7 +14,7 @@ require(dirname(__FILE__) . '/../../../../../../config.php');
 require_once($CFG->libdir.'/clilib.php');
 
 $usage = "Imports data from table `logstore_standard_log` into table `logstore_lanalytics_log`.
-  
+
 Options:
     -h --help               Print this help.
     --clean                 Clean the `logstore_lanalytics_log` table before running.
@@ -22,6 +23,8 @@ Options:
                             be used before activating the logstore in the settings.
     --startid=<value>       First ID to be imported, leave empty to import all events.
     --batch=<value>         How many logs to be handled in one batch. Defaults to 10000
+    --limit=<value>         For testing/development purposes only. This set the max. ID
+                            of the row to limit the number of rows to be imported.
 
 Example:
 php cli/import.php
@@ -32,6 +35,7 @@ list($options, $unrecognised) = cli_get_params([
     'clean' => false,
     'startid' => 0,
     'batch' => 0,
+    'limit' => 0,
 ], [
     'h' => 'help'
 ]);
@@ -47,6 +51,10 @@ if ($options['startid']) {
 
 if ($options['batch']) {
     $batch = (int) $options['batch'];
+}
+
+if ($options['limit']) {
+    $limit = (int) $options['limit'];
 }
 
 function truncate_logs() {
@@ -85,16 +93,13 @@ function copy_rows(int $offsetid, int $limitid) {
     
     $sql = <<<SQL
         INSERT INTO {logstore_lanalytics_log}
-            (eventid, timecreated, courseid, objectid, contextid, userid, os, browser)
+            (eventid, timecreated, courseid, contextid, device)
         SELECT
             e.id AS eventid,
             l.timecreated,
             l.courseid,
-            l.objectid,
             l.contextid,
-            0 AS userid,
-            0 AS os,
-            0 AS browser
+            0 AS device
         FROM {logstore_standard_log} l
         JOIN {logstore_lanalytics_evtname} e ON
             l.eventname = e.eventname
@@ -122,8 +127,8 @@ if ($options['clean']) {
 
 cli_writeln("Starting import.");
 
-$offsetid;
-while (check_for_rows($offsetid)) {
+$offsetid = 0;
+while (check_for_rows($offsetid) && ($limit === 0 || $offsetid < $limit)) {
     $limitid = $offsetid + $batch;
     cli_writeln("  Importing rows from > {$offsetid} to <= {$limitid}");
 

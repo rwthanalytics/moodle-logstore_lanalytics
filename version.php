@@ -26,7 +26,7 @@ defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'logstore_lanalytics';
 
-$plugin->version = 2020062200;
+$plugin->version = 2020101607;
 $plugin->release = 'v0.6.0';
 
 $plugin->requires = 2017111302;

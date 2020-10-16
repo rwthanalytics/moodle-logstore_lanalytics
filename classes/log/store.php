@@ -34,7 +34,7 @@ use logstore_lanalytics\devices;
 use stdClass;
 use \context_course;
 
-const MOODLE_API = 1;
+const MOODLE_API = 10100;
 
 class store implements \tool_log\log\writer {
     use helper_store;
@@ -70,11 +70,9 @@ class store implements \tool_log\log\writer {
         $entry['origin'] = $PAGE->requestorigin; // 'ws' (API/App), 'web', 'restore' or 'cli'
         $entry['ip'] = $PAGE->requestip; // could later be used by a log to track if request is from inside or outside of specific network
         if ($PAGE->requestorigin === 'ws') {
-            $entry['os'] = MOODLE_API;
-            $entry['browser'] = MOODLE_API;
+            $entry['device'] = MOODLE_API;
         } else {
-            $entry['os'] = devices::get_os();
-            $entry['browser'] = devices::get_browser();
+            $entry['device'] = devices::get_device();
         }
 
         $this->buffer[] = $entry;
@@ -179,11 +177,8 @@ class store implements \tool_log\log\writer {
             $record->eventid = $eventid;
             $record->timecreated = $event['timecreated'];
             $record->courseid = $event['courseid'];
-            $record->objectid = $event['objectid'];
             $record->contextid = $event['contextid'];
-            $record->userid = 0; // $event['userid']; // Anonymize log entries everything.
-            $record->os = $event['os'];
-            $record->browser = $event['browser'];
+            $record->device = $event['device'];
             $records[] = $record;
         }
 

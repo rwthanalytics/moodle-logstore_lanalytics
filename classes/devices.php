@@ -26,43 +26,52 @@ namespace logstore_lanalytics;
 
 defined('MOODLE_INTERNAL') || die;
 
+// Meaning of the device value:
+// 0__XX -> Browser (where XX is the ID of the browser)
+// 0XX__ -> OS (where XX is the ID of the operating system)
+// 00000 -> unknown
+// 1__00 -> Special cases (non-browsers)
+// 10100 -> Moodle API
+
+const OS_MULTIPLIER = 100;
+
 // Dont' change the keys (like 'Windows' or 'Opera') below,
 // as they might be used by other plugins to reference the values
 class devices {
     const BROWSER = [
             'unknown' => 0,
-            'Moodle API' => 1,
+            'Moodle API' => 0,
 
-            'Chrome' => 1000,
-            'Edge' => 2000,
-            'Firefox' => 3000,
-            'Internet Explorer' => 4000,
-            'Opera' => 5000,
-            'Safari' => 6000,
+            'Chrome' => 11,
+            'Edge' => 12,
+            'Firefox' => 13,
+            'Internet Explorer' => 14,
+            'Opera' => 15,
+            'Safari' => 16,
 
-            'Mobile' => 10000, // Unknown mobile browser
+            'Mobile' => 50, // Unknown mobile browser
     ];
 
     const OS = [
             'unknown' => 0,
-            'Moodle API' => 1,
 
-            'Windows' => 1000,
-            'Windows XP' => 1001,
-            'Windows Vista' => 1002,
-            'Windows 7' => 1003,
-            'Windows 8' => 1004,
-            'Windows 8.1' => 1005,
-            'Windows 10' => 1006,
+            'macOS' => 10,
 
-            'macOS' => 2000,
+            'Linux' => 20,
 
-            'Linux' => 3000,
+            'Windows' => 30,
+            'Windows XP' => 31,
+            'Windows Vista' => 32,
+            'Windows 7' => 33,
+            'Windows 8' => 34,
+            'Windows 8.1' => 35,
+            'Windows 10' => 36,
 
-            // 10k+ -> mobile
-            'Mobile' => 10000,
-            'iOS' => 11000,
-            'Android' => 12000,
+            'Mobile' => 50,
+            'iOS' => 60,
+            'Android' => 70,
+            
+            'Moodle API' => 101,
     ];
 
     public static function get_browser() {
@@ -121,6 +130,12 @@ class devices {
         }
 
         return self::OS[$os_platform] ?? 0;
+    }
+
+    public static function get_device() {
+        $os = self::get_os();
+        $browser = self::get_browser();
+        return $os * OS_MULTIPLIER + $browser;
     }
 
     public static function browserIdToString(int $id): string {

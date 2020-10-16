@@ -1,6 +1,13 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [0.7.0]
+### Changed
+- Log table modified
+  - Dropped columns: userid, objectid, os, browser
+  - Added columns: device (combined value for os and browser)
+- This means roughly 20% less space is used
+
 ## [0.6.0] - 2020-06-22
 ### Added
 - Support for `guest` role is added
