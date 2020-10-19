@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## [0.7.0]
+## [0.7.0] - 2020-10-19
 ### Changed
 - Log table modified
   - Dropped columns: userid, objectid, os, browser
