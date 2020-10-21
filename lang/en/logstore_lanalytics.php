@@ -23,14 +23,7 @@
  */
 
 $string['pluginname'] = 'Learning Analytics Log';
-
-/*
-setting_course_ids
-setting_course_ids_descr
-setting_nontracking_roles
-setting_nontracking_roles_descr
-buffersize
-*/
+$string['privacy:metadata'] = 'This plugin does not store any personal data. All data is logged and stored anonymously.';
 
 // Settings
 $string['setting_log_scope'] = 'log_scope';
