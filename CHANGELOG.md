@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [0.8.0]
+### Added
+- Privacy Provider added
+
 ## [0.7.0] - 2020-10-19
 ### Changed
 - Log table modified
