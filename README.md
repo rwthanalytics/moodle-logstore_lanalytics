@@ -1,5 +1,11 @@
 # Logstore Learning Analytics for Moodle
 
-This plugin implements a logstore to log data used for analytics purposes. In contrast to [`logstore_standard_log`](https://docs.moodle.org/dev/Logging_2#Standard_log_storage_plugin_.28logstore_standard.29) this plugin is designed to respect GDPR.
+This plugin implements a logstore to log data used for analytics purposes. It is designed to work together with [`local_learning_analytics`](https://github.com/rwthanalytics/moodle-local_learning_analytics). To keep documentation in one place, you find all documentation in that repository.
 
-The plugin is designed to be used in conjunction with `local_learning_analytics`. Please check out the README of that project for more information.
+Plugins:
+
+- [`local_learning_analytics`](https://github.com/rwthanalytics/moodle-local_learning_analytics): User Interface
+- [`logstore_lanalytics`](https://github.com/rwthanalytics/moodle-logstore_lanalytics): Logs the events to the database (this plugin)
+
+
+
