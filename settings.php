@@ -71,4 +71,12 @@ if ($hassiteconfig) {
         '50',
         PARAM_INT
     ));
+
+    $settings->add(new admin_setting_configcheckbox(
+        'logstore_lanalytics/externalDB_enable',
+        new lang_string('setting_externalDB_enable_info', 'logstore_lanalytics'),
+        new lang_string('setting_externalDB_enable_start', 'logstore_lanalytics'),
+        1,
+        'No'
+    ));
 }

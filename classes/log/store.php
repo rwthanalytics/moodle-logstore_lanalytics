@@ -183,7 +183,19 @@ class store implements \tool_log\log\writer {
         }
 
         if (count($records) !== 0) {
-            $DB->insert_records('logstore_lanalytics_log', $records);
+            if(!get_config('logstore_lanalytics', 'externalDB_enable') == 0) {
+                if(isset($CFG->logstore_lanalytics_external_database_logging)) {
+                    $configarr = $CFG->logstore_lanalytics_external_database_logging;
+                    $DBExternal = \moodle_database::get_driver_instance($configarr['externallogdbtype'], $configarr['externallogdblibrary'], true);
+                    $DBExternal->connect($configarr['externallogdbhost'], $configarr['externallogdbuser'], $configarr['externallogdbpass'], $configarr['externallogdbname'], $configarr['externallogprefix'], $configarr['externallogdboptions']);
+                    $DBExternal->insert_records($configarr['externallogdbtable'], $records);
+                }
+                else {
+                    $DB->insert_records('logstore_lanalytics_log', $records);
+                }
+            } else {
+                $DB->insert_records('logstore_lanalytics_log', $records);
+            }
 
             // Iterate over lalog plugins and call their logger::log function
             $pluginman = \core_plugin_manager::instance();

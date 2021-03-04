@@ -38,3 +38,5 @@ $string['setting_tracking_roles_descr'] = 'Define which roles should be tracked 
 $string['setting_nontracking_roles'] = 'nontracking_roles';
 $string['setting_nontracking_roles_descr'] = 'Define which roles should <strong>not</strong> be tracked (blacklist). This is useful if you don\'t want to track specific roles (like managers or teachers). Specify the role by using the "shortname" (can be found via <em>Site Administration</em> -> <em>Users</em> tab -> <em>Permissions</em> category -> <em>Define roles</em>). By default, all roles are tracked. Example: <code>teacher,editingteacher,manager</code>. This settings has priority over <code>tracking_roles</code>.';
 $string['buffersize'] = 'buffersize';
+$string['setting_externalDB_enable_info'] = 'Log over external DB';
+$string['setting_externalDB_enable_start'] = 'Defines whether Plugin-data is logged on an external Database. Make sure you entered all config data in the moodle config.php before checking this box.';
