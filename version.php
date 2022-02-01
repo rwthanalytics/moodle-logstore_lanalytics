@@ -28,5 +28,6 @@ $plugin->component = 'logstore_lanalytics';
 
 $plugin->version = 2020102200;
 $plugin->release = 'v0.8.0';
+$plugin->maturity = MATURITY_STABLE;
 
 $plugin->requires = 2017111302;
