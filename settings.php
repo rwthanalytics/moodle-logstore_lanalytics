@@ -64,6 +64,22 @@ if ($hassiteconfig) {
         PARAM_RAW
     ));
 
+    $options = array(
+        0    => get_string('neverdeletelogs'),
+        1825 => get_string('numyears', '', 5),
+        1460 => get_string('numyears', '', 4),
+        1095 => get_string('numyears', '', 3),
+        730 => get_string('numyears', '', 2),
+        365 => get_string('numyear', '', 1),
+        270 => get_string('nummonths', '', 9),
+        180 => get_string('nummonths', '', 6),
+        90  => get_string('nummonths', '', 3),
+        30  => get_string('nummonth', '', 1)
+    );
+    $settings->add(new admin_setting_configselect('logstore_lanalytics/loglifetime',
+        new lang_string('loglifetime', 'logstore_lanalytics'),
+        new lang_string('configloglifetime_descr', 'logstore_lanalytics'), 0, $options));
+
     $settings->add(new admin_setting_configtext(
         'logstore_lanalytics/buffersize',
         get_string('buffersize', 'logstore_lanalytics'),

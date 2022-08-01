@@ -38,3 +38,9 @@ $string['setting_tracking_roles_descr'] = 'Define which roles should be tracked 
 $string['setting_nontracking_roles'] = 'nontracking_roles';
 $string['setting_nontracking_roles_descr'] = 'Define which roles should <strong>not</strong> be tracked (blacklist). This is useful if you don\'t want to track specific roles (like managers or teachers). Specify the role by using the "shortname" (can be found via <em>Site Administration</em> -> <em>Users</em> tab -> <em>Permissions</em> category -> <em>Define roles</em>). By default, all roles are tracked. Example: <code>teacher,editingteacher,manager</code>. This settings has priority over <code>tracking_roles</code>.';
 $string['buffersize'] = 'buffersize';
+
+$string['loglifetime'] = 'Keep logs for';
+$string['configloglifetime_descr'] = 'This specifies the length of time you want to keep logs about course activity. Logs that are older than this age are automatically deleted. It is best to keep logs as long as possible, in case you need them, but if you have a very busy server and are experiencing performance problems, then you may want to lower the log lifetime. Values lower than 6 months are not recommended because statistics may not work properly.';
+
+// Cleanup Task
+$string['taskcleanup'] = 'Log table cleanup';
