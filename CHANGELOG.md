@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [0.10.0] - 2022-08-18
+## Fixed
+- PHP 8 compatibility
+
 ## [0.9.0] - 2022-08-01
 ### Added
 - Cleanup Task added to automatically clean up log database table after a given time.
