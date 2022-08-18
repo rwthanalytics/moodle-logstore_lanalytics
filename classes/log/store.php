@@ -86,7 +86,7 @@ class store implements \tool_log\log\writer {
         }
     }
 
-    protected function insert_event_entries(array $events) {
+    protected function insert_event_entries($events) {
         global $DB, $CFG;
 
         $courseids = [];
