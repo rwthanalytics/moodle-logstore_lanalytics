@@ -26,6 +26,14 @@ $string['pluginname'] = 'Learning Analytics Log';
 $string['privacy:metadata'] = 'This plugin does not store any personal data. All data is logged and stored anonymously.';
 
 // Settings
+$string['setting_loggingmode'] = 'loggingmode';
+$string['setting_loggingmode_descr'] = 'Defines how events are captured. "Real-time" (default) processes and stores every event as it happens - existing sites are unaffected unless this is changed. "Scheduled" instead defers all filtering/storing to a nightly scheduled task that reads from <code>logstore_standard_log</code>, avoiding synchronous DB load during peaks (e.g. exams). <strong>Important:</strong> "Scheduled" mode requires the standard log store (<em>Site administration &gt; Plugins &gt; Logging &gt; Manage log stores</em> &gt; "Standard log") to be enabled, since it becomes the sole source of raw event data - the real-time writer does nothing in this mode. If the standard log store is disabled, the scheduled import task will have no new data to import.';
+$string['setting_loggingmode_realtime'] = 'Real-time (process events immediately)';
+$string['setting_loggingmode_scheduled'] = 'Scheduled (import via nightly task from logstore_standard_log)';
+$string['setting_import_batchsize'] = 'import_batchsize';
+$string['setting_import_batchsize_descr'] = 'Only used in "Scheduled" logging mode. Maximum number of rows from <code>logstore_standard_log</code> processed per batch by the scheduled import task.';
+$string['setting_import_timelimit'] = 'import_timelimit';
+$string['setting_import_timelimit_descr'] = 'Only used in "Scheduled" logging mode. Maximum time (in seconds) the scheduled import task is allowed to run per execution before stopping and resuming on the next run.';
 $string['setting_log_scope'] = 'log_scope';
 $string['setting_log_scope_descr'] = 'Defines the scope of the logging process. By default, everything is logged.';
 $string['setting_log_scope_all'] = 'Log all events';
@@ -44,3 +52,6 @@ $string['configloglifetime_descr'] = 'This specifies the length of time you want
 
 // Cleanup Task
 $string['taskcleanup'] = 'Log table cleanup';
+
+// Scheduled Import Task
+$string['taskimport'] = 'Scheduled log import from logstore_standard_log';

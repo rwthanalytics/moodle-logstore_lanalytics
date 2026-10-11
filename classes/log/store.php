@@ -32,7 +32,6 @@ use \tool_log\helper\reader as helper_reader;
 use \core\event\base as event_base;
 use logstore_lanalytics\devices;
 use stdClass;
-use \context_course;
 
 const MOODLE_API = 10100;
 
@@ -43,6 +42,17 @@ class store implements \tool_log\log\writer {
 
     public function __construct(log_manager $manager) {
         $this->helper_setup($manager);
+    }
+
+    /**
+     * Returns true if the plugin is configured to use "scheduled" logging mode, meaning
+     * the real-time writer should not do any processing (see write() below).
+     *
+     * @return bool
+     */
+    public static function is_scheduled_mode(): bool {
+        $loggingmode = get_config('logstore_lanalytics', 'loggingmode');
+        return $loggingmode === 'scheduled';
     }
 
     protected function is_event_ignored(event_base $event) {
@@ -59,6 +69,12 @@ class store implements \tool_log\log\writer {
     public function write(\core\event\base $event) {
         // copied mostly from "tool_log\helper\buffered_writer" with some modifications
         global $PAGE;
+
+        if (self::is_scheduled_mode()) {
+            // In "scheduled" logging mode, all data comes from logstore_standard_log via the
+            // scheduled import task instead, so we deliberately do no work here at all.
+            return;
+        }
 
         if ($this->is_event_ignored($event)) {
             return;
@@ -89,90 +105,17 @@ class store implements \tool_log\log\writer {
     protected function insert_event_entries($events) {
         global $DB, $CFG;
 
-        $courseids = [];
-        $logscope = get_config('logstore_lanalytics', 'log_scope'); // 'all', 'include', 'exclude'
-        if ($logscope === false) {
-            $logscope = 'all';
-        }
-
-        if ($logscope === 'include' || $logscope === 'exclude') {
-            $courseids = get_config('logstore_lanalytics', 'course_ids');
-            if ($courseids === false || $courseids === '') {
-                $courseids = [];
-            } else {
-                $courseids = array_map('trim', explode(',', $courseids));
-            }
-        }
-
-        $trackingrolesstr = get_config('logstore_lanalytics', 'tracking_roles');
-        $trackingroles = [];
-        if ($trackingrolesstr !== false && $trackingrolesstr !== '') {
-            $trackingroles = array_map('trim', explode(',', $trackingrolesstr));
-        }
-
-        $nottrackingrolesstr = get_config('logstore_lanalytics', 'nontracking_roles');
-        $nottrackingroles = [];
-        if ($nottrackingrolesstr !== false && $nottrackingrolesstr !== '') {
-            $nottrackingroles = array_map('trim', explode(',', $nottrackingrolesstr));
-        }
+        $settings = filter::get_settings(true); // Reload once per flush to pick up setting changes.
 
         $records = [];
         $eventsToTrack = [];
         foreach ($events as $event) {
-            if ($logscope !== 'all' // first checking the fast option
-                && (($logscope === 'include' && !in_array($event['courseid'], $courseids))
-                || ($logscope === 'exclude' && in_array($event['courseid'], $courseids)))) {
+            if (!filter::should_track_event($event['courseid'], $event['userid'], $settings)) {
                 continue;
-            }
-            if (count($trackingroles) !== 0 || count($nottrackingroles) !== 0) {
-                $coursecontext = context_course::instance($event['courseid'], IGNORE_MISSING);
-                $trackevent = true;
-                if ($coursecontext) { // context might not be defined for global events like login, main page.
-                    $userroles = get_user_roles($coursecontext, $event['userid']);
-                    if (isguestuser()) {
-                        // we "fake" a guest role here as only the shortname matters (that way, we don't need another database request)
-                        $guestrole = new \stdClass;
-                        $guestrole->shortname = 'guest';
-                        $userroles[] = $guestrole;
-                    }
-                    if (count($trackingroles) !== 0) { // whitelist mode, respecting blacklist
-                        $trackevent = false;
-                        foreach ($userroles as $role) {
-                            if (in_array($role->shortname, $nottrackingroles)) { // blacklisted
-                                $trackevent = false;
-                                break;
-                            }
-                            if (in_array($role->shortname, $trackingroles)) { // whitelisted
-                                $trackevent = true;
-                            }
-                        }
-                    } else { // blacklist mode, no whitelist defined
-                        foreach ($userroles as $role) {
-                            if (in_array($role->shortname, $nottrackingroles)) {
-                                $trackevent = false;
-                                break;
-                            }
-                        }
-                    }
-                } else if (count($trackingroles) !== 0) {
-                    // whitelist is active -> only track specific roles, therefore skip this one as no role is defined
-                    $trackevent = false;
-                }
-                if (!$trackevent) {
-                    continue;
-                }
             }
 
             $eventsToTrack[] = $event;
-            $eventid = 0;
-            $dbevent = $DB->get_record('logstore_lanalytics_evtname', ['eventname' => $event['eventname']], 'id');
-            if ($dbevent) {
-                $eventid = $dbevent->id;
-            } else {
-                $evtrecord = new stdClass();
-                $evtrecord->eventname = $event['eventname'];
-                $eventid = $DB->insert_record('logstore_lanalytics_evtname', $evtrecord, true);
-            }
+            $eventid = filter::resolve_eventid($event['eventname']);
             $record = new stdClass();
             $record->eventid = $eventid;
             $record->timecreated = $event['timecreated'];
